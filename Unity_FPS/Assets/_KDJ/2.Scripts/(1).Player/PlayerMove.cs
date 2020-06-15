@@ -31,6 +31,7 @@ public class PlayerMove : MonoBehaviour
         transform.Translate(dir * speed * Time.deltaTime);
 
 
+
         //카메라가 보는 방향으로 이동해야 한다 
         dir = Camera.main.transform.TransformDirection(dir);
         //transform.Translate(dir * speed * Time.deltaTime);

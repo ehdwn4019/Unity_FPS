@@ -25,18 +25,15 @@ public class PlayerRotate : MonoBehaviour
 
     private void Rotate()
     {
+
+        //플레이어 이동
         float h = Input.GetAxis("Mouse X");
 
         angleX += h * speed * Time.deltaTime;
        
         transform.eulerAngles = new Vector3(0, angleX, 0);
 
-        //angleY = Mathf.Clamp(angleY, -60, 60);
-
-        //위에거랑 아래거랑 같은 방식 
-
-        //if (angle.x > 60) angle.x = 60;
-        //if (angle.x < -60) angle.x = -60;
+       
 
     }
 }
