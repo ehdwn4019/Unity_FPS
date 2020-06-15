@@ -1,0 +1,42 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerRotate : MonoBehaviour
+{
+    //카메라를 마우스 움직이는 방향으로 회전하기 
+    public float speed = 150; //회전속도 (Timme.DeltaTime을 통해 1초에 150도 회전)
+    //회전각도를 직접 제어하자
+    float angleX;
+
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        //카메라 회전 
+        Rotate();
+    }
+
+    private void Rotate()
+    {
+        float h = Input.GetAxis("Mouse X");
+
+        angleX += h * speed * Time.deltaTime;
+       
+        transform.eulerAngles = new Vector3(0, angleX, 0);
+
+        //angleY = Mathf.Clamp(angleY, -60, 60);
+
+        //위에거랑 아래거랑 같은 방식 
+
+        //if (angle.x > 60) angle.x = 60;
+        //if (angle.x < -60) angle.x = -60;
+
+    }
+}
