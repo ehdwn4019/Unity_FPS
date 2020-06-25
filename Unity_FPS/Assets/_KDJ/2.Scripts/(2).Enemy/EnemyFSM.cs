@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 //몬스터 유한상태 머신 
 public class EnemyFSM : MonoBehaviour
@@ -9,7 +10,7 @@ public class EnemyFSM : MonoBehaviour
     //몬스터 상태 이넘문
     enum EnemyState
     {
-        Idle,Move,Attack,Return,Damaged,Die
+        Idle,Move,Attack,Return,Damaged,Die,Skill1,Skill2
     }
 
     EnemyState state; //몬스터 상태 변수 
@@ -45,10 +46,13 @@ public class EnemyFSM : MonoBehaviour
     Vector3 startPoint;//몬스터 시작위치
     Quaternion startRotation; //몬스터 시작위치 
     Transform player;//플레이어를 찾기위해(안그러면 모든 몬스터에 다 드래그앤드랍 해줘야 한다 그냥 코드로 찾아서 처리하기)
-    CharacterController cc;//몬스터 이동을 위해 캐릭터컨트롤러 컴포넌트가 필요 
+    //CharacterController cc;//몬스터 이동을 위해 캐릭터컨트롤러 컴포넌트가 필요 
 
     //애니메이션을 제어하기 위한 애니메이터 컴포넌트 
     Animator anim;
+
+    //네비게이션 
+    NavMeshAgent nav;
 
     //몬스터 일반변수
     int hp = 100;//체력
@@ -70,10 +74,11 @@ public class EnemyFSM : MonoBehaviour
         //플레이어 트랜스폼 컴포넌트
         player = GameObject.Find("Player").transform;
         //캐릭터 컨트롤러 컴포넌트 
-        cc = GetComponent<CharacterController>();
+        //cc = GetComponent<CharacterController>();
         //애니메이터 컴포넌트
         anim = GetComponentInChildren<Animator>();
-
+        //네비게이션 컴포넌트
+        nav = GetComponent<NavMeshAgent>();
     }
 
     // Update is called once per frame
@@ -127,8 +132,8 @@ public class EnemyFSM : MonoBehaviour
         //magnitude는 normalize 시키면 안된다 1이 되기 때문에 
         //distance는 vector3값이고 magnitude는 float 값이다 
         //추가 : 곱셈보다는 나눗셈이더 효율적이다 ex ) 어떤수에 나누기 2보다 0.5곱하는게 성능향상
-        Vector3 dir = (transform.position - player.position);
-        float distance = dir.magnitude;
+        //Vector3 dir = (transform.position - player.position);
+        //float distance = dir.magnitude;
 
         //1. 플레이어와 일정범위가 되면 이동상태로 변경 (탐지범위)
         
@@ -183,9 +188,10 @@ public class EnemyFSM : MonoBehaviour
         //리턴상태가 아니면 플레이어를 추격해야 한다 
         else if(Vector3.Distance(transform.position,player.position)>attackRange)
         {
+            nav.SetDestination(player.position);
             //플레이어를 추격
             //이동방향 (벡터의 뺄셈)
-            Vector3 dir = (player.position - transform.position).normalized;
+            //Vector3 dir = (player.position - transform.position).normalized;
             //캐릭터 컨트롤러를 이용해서 이동하기
             //cc.Move(dir * speed * Time.deltaTime);
             //몬스터가 벡스텝으로 쫒아온다
@@ -201,7 +207,7 @@ public class EnemyFSM : MonoBehaviour
             //타겟과 본인이 일직선상일경우 백덤블링으로 회전을 한다 
 
             //최종적으로 자연스런 회전처리를 하려면 결국 쿼터니온을 사용해야한다 
-            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), 10 * Time.deltaTime);
+            //transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), 10 * Time.deltaTime);
 
             //캐릭터 컨트롤러를 이용해서 이동하기
             //cc.Move(dir * speed * Time.deltaTime);
@@ -210,7 +216,7 @@ public class EnemyFSM : MonoBehaviour
             //중력문제를 해결하기 위해서 심플무브를 사용한다 (충돌,중력이 내부적으로 들어가 있다)
             //심플무브는 최소한의 물리가 적용되어 중력문제를 해결할 수 있다
             //단 내부적으로 시간처리를 하기 때문에 Time.deltaTime을 사용하지 않는다 
-            cc.SimpleMove(dir * speed);
+            //cc.SimpleMove(dir * speed);
         }
         else //공격범위 안에 들어옴
         {
@@ -294,8 +300,8 @@ public class EnemyFSM : MonoBehaviour
         //도착하면 대기상태로 변경
         if(Vector3.Distance(transform.position,startPoint)>0.1)
         {
-            Vector3 dir = (startPoint - transform.position).normalized;
-            cc.SimpleMove(dir * speed);
+            //Vector3 dir = (startPoint - transform.position).normalized;
+            //cc.SimpleMove(dir * speed);
         }
         else
         {
@@ -408,7 +414,7 @@ public class EnemyFSM : MonoBehaviour
     IEnumerator DieProc()
     {
         //캐릭터컨트롤러 비활성화 
-        cc.enabled = false;
+       // cc.enabled = false;
 
         //2초후에 자기자신을 제거한다 
         yield return new WaitForSeconds(2.0f);
