@@ -1,0 +1,10 @@
+diff a/Unity_FPS/Assets/_KDJ/1.Scenes/SampleScene.unity b/Unity_FPS/Assets/_KDJ/1.Scenes/SampleScene.unity	(rejected hunks)
+@@ -121,7 +121,7 @@
+     accuratePlacement: 0
+     debug:
+       m_Flags: 0
+-  m_NavMeshData: {fileID: 0}
++  m_NavMeshData: {fileID: 23800000, guid: c805ef30243963043b61877380855757, type: 2}
+ --- !u!1 &66505976
+ GameObject:
+   m_ObjectHideFlags: 0
